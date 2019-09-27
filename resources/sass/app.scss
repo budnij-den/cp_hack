@@ -1,0 +1,125 @@
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+body {
+  background: linear-gradient(rgba(0,0,0,0.01),rgba(0,0,0,0.01)), url('/svg/krishnaRadhe.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.navbar-laravel {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.chat {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.chat li {
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px dotted #B3A9A9;
+}
+
+.chat li .chat-body p {
+  margin: 0;
+  color: #777777;
+}
+
+.chats .card-body {
+  overflow-y: scroll;
+  height: 80vh;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #555;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background: url("/svg/ShP.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow-x: hidden;
+  padding-top: 60px;
+  transition: 0.3s;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 35px;
+  margin-left: 55px;
+}
+
+#main{
+  transition: opacity 0.3s;
+}
+div .width, .projectCreate{
+  width: 360px;
+}
+
+@media screen and (max-width: 450px)
+{
+  .sidenav {
+    padding-top: 30px;
+  }
+  .sidenav a{
+    font-size: 18px;
+    padding: 4px 4px 4px 4px;}
+  .sidenav .closebtn{
+    top: -20px;
+    right: 10px;
+    font-size: 40px;
+    margin-left: 30px;
+  }
+  body{
+    padding: 0;
+    margin: 0;
+  }
+  div .card-body{
+    padding-left: 0;
+    padding-right: 0;
+  }
+  td, th, tr{
+    margin: 1rem;
+  }
+  img .personal-img .all-img{width: 75px;}
+}
