@@ -9,19 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>
-        @auth
-            @hasSection('title')
-                @yield('title')
-            @else
-                @if(auth()->user()->sname)
-                    {{ auth()->user()->sname }}
-                @else
-                    {{ auth()->user()->name }}
-                @endif
-            @endif
-        @else
-            Гость
-        @endauth
+        @yield('title')
     </title>
     <script src="{{ asset('js/app.js') }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -44,11 +32,7 @@
         <img src="{{ url('svg/BSSHSA.jpg') }}" width="35" class="rounded align-top m-2" alt="">
     </span>
     <div class="page-main d-none" ref="main" id="main">
-        @auth
-                @yield('content')
-        @else
-                @yield('guest')
-        @endauth
+        @yield('content')
     </div>
 </div>
 @include('layouts.footer')
