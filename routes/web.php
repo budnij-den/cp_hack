@@ -24,7 +24,7 @@ Route::get('/', 'IndexController@index');
 Route::get('/messages', 'ChatsController@fetchMessages');
 //Route::get('/slbs', 'SlbsController@index');
 //Route::get('/slbs/statistic','SlbsController@statistics');
-Route::get('/{user}', 'UserController@index');
+Route::get('/activity', 'UserController@create  ');
 //Route::post('/login', 'InterController@enter');
 //Route::post('/check', 'InterController@check');
 Route::post('/messages', 'ChatsController@sendMessage');

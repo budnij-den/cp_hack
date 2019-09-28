@@ -161,7 +161,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $mass = 'Hello world';
+        return view('user.all', compact('mass'));
     }
 
     /**

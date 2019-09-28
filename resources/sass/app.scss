@@ -5,10 +5,7 @@
 @import '~bootstrap/scss/bootstrap';
 
 body {
-  background: linear-gradient(rgba(0,0,0,0.01),rgba(0,0,0,0.01)), url('/svg/krishnaRadhe.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-color: #f4ece2;
 }
 
 .navbar-laravel {

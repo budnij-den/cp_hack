@@ -27,7 +27,7 @@ Vue.component('chat', require('./components/ChatMessages.vue').default);
 
 const app = new Vue({
    el: '#app',
-    methods: {
+    /*methods: {
        openNav() {
            var vm = this;
            vm.$refs.mySidenav.style.width = "280px";
@@ -64,7 +64,7 @@ const app = new Vue({
                getTeg.innerHTML = 'Здесь';
            }
         },
-    },
+    },*/
     created() {
         moment.locale('ru');
         setInterval(() => this.updateProjectTime(),1000);
