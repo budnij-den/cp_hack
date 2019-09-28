@@ -21,7 +21,7 @@
      role="status">
     <span class="sr-only">Loading...</span>
 </div>
-<div id="app">
+<div>
     {{--<div class="page-header d-none sidenav bg-light" ref="mySidenav" id="mySidenav">
         @include('layouts.navbar')
     </div>

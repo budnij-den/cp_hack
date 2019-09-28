@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\PhotoFact;
 use App\Project;
 use App\Slb;
 use App\User;
@@ -161,8 +162,98 @@ class UserController extends Controller
      */
     public function create()
     {
-        $mass = 'Hello world';
-        return view('user.all', compact('mass'));
+        $owner_id = "-186978175";
+        $app_access = "94482762a89fbd322abfc553dd1e29d3316f380fc496e1a5a0ec8464c3bde325a595ebc8d0146684c88e6";
+        $user_access = "3326f1a1839777020551629800b3d3ac38e89740468603976db585605841efb45c828fca01529dce96084";
+
+//сначала получаем идентификатор альбома с названием "фотоотчет"
+        $query = file_get_contents("https://api.vk.com/method/photos.getAlbums?owner_id=" . $owner_id . "&access_token=" . $app_access . "&v=5.0.1");
+        $result = json_decode($query, true);
+
+        $albumId = [];
+//шаблонизируем поиск названия "фотоотчет"
+        $substring = 'отч';
+        $substrf = 'фото';
+
+        foreach ($result['response'] as $objects) {
+            if (is_array($objects))
+                foreach ($objects as $o) {
+                    //echo $o['id'].": ".$o["title"]."<br>";
+                    if ((stripos($o["title"], $substring) and stripos($o["title"], $substrf)
+                        || stripos($o["title"], $substring) == 0
+                        || stripos($o["title"], $substrf) == 0)) {
+                        $albumId[] = $o['id'];
+                    };
+                };
+        };
+//теперь забираем данные фотографий в найденном альбоме
+        for ($i = 0; $i < count($albumId); $i++) {
+            if(!isset(User::where('id', $albumId[$i])->get()[0])) {
+                User::create([
+                    'name' => 'Волонтёр ' . ($i+1),
+                    'id' => $albumId[$i]
+                ]);
+            }
+            $getPhotosUri[$i] = "https://api.vk.com/method/photos.get?owner_id=" . $owner_id . "&album_id=" . $albumId[$i] . "&count=50&access_token=" . $user_access . "&v=5.0.1";
+            $photosJSON = file_get_contents($getPhotosUri[$i]);
+            $parsedPhotos = json_decode($photosJSON, true);
+
+//и отправляем в базу
+            foreach ($parsedPhotos['response'] as $objects) {
+                if (is_array($objects)) {
+                    foreach ($objects as $photo) {
+                        if(!isset(PhotoFact::where('photoId', $photo['id'])->get()[0]) && isset($photo['lat'])) {
+                            PhotoFact::create([
+                                'photoId' => $photo['id'],
+                                'album_id' => $photo['album_id'],
+                                'user_id' => $photo['user_id'],
+                                'comment' => $photo['text'],
+                                'unix_sec' => $photo['date'],
+                                'latitude' => $photo['lat'],
+                                'longitude' => $photo['long'],
+                            ]);
+                        }
+                        else
+                            PhotoFact::create([
+                                'photoId' => $photo['id'],
+                                'album_id' => $photo['album_id'],
+                                'user_id' => $photo['user_id'],
+                                'comment' => $photo['text'],
+                                'unix_sec' => $photo['date'],
+                            ]);
+                    }
+                }
+            };
+
+            $photos = PhotoFact::where('album_id', $albumId[$i])
+                ->select('photoId', 'latitude', 'longitude', 'album_id')
+                ->orderBy('unix_sec')
+                ->get();
+            $photoes = [];
+            for ($j = 0; $j < count($photos); $j++) {
+                if (($j > 0) && isset($photos[$j]->latitude)) {
+                    $distance = sqrt(abs($photos[$j]->latitude - $photos[$j - 1]->latitude) ** 2 + abs($photos[$j]->longitude - $photos[$j - 1]->longitude) ** 2);
+                    $metreDistance = (int)($distance * 3.14 * 25600 / 180);
+                    PhotoFact::where('photoId', $photos[$j]->photoId)
+                        ->update([
+                            'distance' => $metreDistance
+                        ]);
+                }
+                $photoes[$j] = PhotoFact::select('distance')->orderby('unix_sec')->get()[$j]->toArray()['distance'];
+            }
+
+            $distanceSum = array_sum($photoes);
+            if ($distanceSum > 0) {
+                User::where('id', $albumId[$i])
+                    ->update([
+                        'distance' => $distanceSum
+                    ]);
+            }
+        }
+
+        $users = User::all();
+
+        return view('user.all', compact('users'));
     }
 
     /**

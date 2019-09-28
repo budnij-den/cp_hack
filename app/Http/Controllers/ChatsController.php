@@ -4,14 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
 use App\Message;
+use App\PhotoFact;
+use App\User;
 use Illuminate\Http\Request;
 
 class ChatsController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
 
     public function index()
     {
@@ -25,19 +23,19 @@ class ChatsController extends Controller
 
     public function sendMessage(Request $request)
     {
-         $message = auth()->user()->messages()->create([
+        $user = User::where('id', '1704')->get()['0'];
+        $message = $user->messages()->create([
             'message' => $request->message
         ]);
-         broadcast(new MessageSent($message->load('user')))->toOthers();
-         return ['status' => 'Message Sent!'];
+        broadcast(new MessageSent($message->load('user')))->toOthers();
+        return ['status' => 'Message Sent!'];
     }
 
     public function deleteMessage($id = null)
     {
-        if(!\Request::ajax()) {
+        if (!\Request::ajax()) {
             return abort(404);
-        }
-        else {
+        } else {
             $message = Message::findOrFail($id);
             $message->delete();
             return response()->json($message, 200);

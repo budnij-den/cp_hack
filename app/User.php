@@ -20,7 +20,7 @@ class User extends Authenticatable implements AuthenticatableContract
      * @var array
      */
     protected $fillable = [
-        'sname','name', 'right', 'id', 'password', 'lastSeen_at'
+        'name', 'id', 'password', 'lastSeen_at', 'distance'
     ];
     protected $hidden = [
         'password', 'remember_token', 'right',
@@ -36,24 +36,9 @@ class User extends Authenticatable implements AuthenticatableContract
         return 'name';
     }
 
-    public function slbs()
+    public function photos()
     {
-        return $this->hasMany(Slb::class);
-    }
-
-    public function services()
-    {
-        return $this->hasOne(Service::class);
-    }
-
-    public function brah()
-    {
-        return $this->hasOne(Brah::class);
-    }
-
-    public function projects()
-    {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(PhotoFact::class);
     }
 
     public function getRememberToken()

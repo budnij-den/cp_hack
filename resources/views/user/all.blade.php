@@ -5,5 +5,7 @@
 @endsection
 
 @section('content')
-    {{ $mass }}
+    <div class="chats" id="app">
+        <photo :users="{{ $users }}"></photo>
+    </div>
 @endsection

@@ -17,7 +17,7 @@ Vue.use(VueChatScroll);
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-Vue.component('chat', require('./components/ChatMessages.vue').default);
+Vue.component('photo', require('./components/VolunteerActivity.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -67,11 +67,11 @@ const app = new Vue({
     },*/
     created() {
         moment.locale('ru');
-        setInterval(() => this.updateProjectTime(),1000);
+        /*setInterval(() => this.updateProjectTime(),1000);
         setInterval(() => this.updateLastSeenTime(),1000);
         var currentDate = moment().format('Y-MM-DD');
         var currentTime =  moment().format('LTS');
         var now = currentDate + ' ' + currentTime;
-        window.onbeforeunload = axios.post('/onlineOrGone', {lastSeen_at: now});
+        window.onbeforeunload = axios.post('/onlineOrGone', {lastSeen_at: now});*/
     }
 });
