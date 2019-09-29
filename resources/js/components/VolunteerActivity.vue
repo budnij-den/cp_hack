@@ -29,10 +29,8 @@
                         Последняя активность
                     </a>
                 </div>
-                <div class="card-body" style="height: 300px; overflow-y:scroll" v-chat-scroll="{always: false}"
-                     @scroll-top="loadPreviousMessages()">
-                    <div class="shadow text-center rounded" v-if="messages.length < allMessages.length"
-                         @click.prevent="loadPreviousMessages()">
+                <div class="card-body" style="height: 300px; overflow-y:scroll" v-chat-scroll="{always: false}">
+                    <div class="shadow text-center rounded">
                         Предыдущие сообщения
                     </div>
                     <div class="rounded p-2 mb-1" style="background-color: lightblue">
@@ -80,10 +78,6 @@
                     });*/
                     this.updatedUsers = response.data;
                 });
-            },
-            sendTypingEvent() {
-                Echo.join('chat')
-                    .whisper('typing', this.user);
             },
             /*sendMessage() {
                 axios.post('/messages', {message: this.newMessage})
