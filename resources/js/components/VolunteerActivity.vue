@@ -29,21 +29,22 @@
                         Последняя активность
                     </a>
                 </div>
-                <div class="card-body" style="height: 300px; overflow-y:scroll" v-chat-scroll="{always: false}">
-                    <div class="shadow text-center rounded">
-                        Предыдущие сообщения
-                    </div>
-                    <div class="rounded p-2 mb-1" style="background-color: lightblue">
+                <div class="card-body" style="height: 300px; overflow-y:scroll">
+                    <div class="rounded p-2 mb-1" style="background-color: lightblue" v-for="(photo, index) in photos"
+                         :key="index">
                         <div class="clearfix">
                             <strong>
+                                {{photo.photoId}}
                             </strong>
                             <span class="text-left">
                                 :
                             </span>
                             <a class="mb-1 text-muted text-left">
+                                {{ photo.create_At}}
                             </a>
                         </div>
                         <div class="text-break">
+                            {{ photo.distance }}
                         </div>
                     </div>
                 </div>
@@ -54,15 +55,16 @@
 
 <script>
     export default {
-        props: ['users'],
+        // props: ['users'],
         data() {
             return {
-                updatedUsers: []
+                users: [],
+                photos: []
             }
         },
         created() {
-            this.fetchDistance();
-            setInterval(() => this.fetchDistance(), 25 * 1000);
+            setInterval(() => this.fetchDistance(), 5 * 1000);
+            setInterval(() => this.fetchPhotos(), 5 * 1000);
             // setInterval(() => this.loadPreviousMessages , 60 * 1000);
             moment.locale('ru');
             /*Echo.join('photo')
@@ -72,36 +74,18 @@
         },
         methods: {
             fetchDistance() {
-                axios.get('activity').then(response => {
-                    /*this.users.forEach(function (item, i) {
-                        item.distance = moment(item.created_at).startOf('second').fromNow();
-                    });*/
-                    this.updatedUsers = response.data;
+                axios.get('/show').then(response => {
+                    this.users = response.data;
                 });
             },
-            /*sendMessage() {
-                axios.post('/messages', {message: this.newMessage})
-                    .then(responce => {
-                        this.fetchMessages();
-                            this.newMessage = ''
+            fetchPhotos() {
+                axios.get('/photos').then(response => {
+                    this.photos = response.data;
+                    this.photos.forEach(function (item, i) {
+                        item.create_At = moment(item.created_at).startOf('second').fromNow();
                     });
+                });
             },
-            deleteMessage(messageId) {
-                axios.get('/messageDelete/' + messageId)
-                    .then(responce => {
-                        this.fetchMessages()
-                });
-            },*/
-            /*loadPreviousMessages() {
-                axios.get('messages').then((response) => {
-                    let k = this.messages.length;
-                    k = k + 5;
-                    this.messages = response.data.slice(-k);
-                    this.messages.forEach(function (item, i) {
-                        item.create_At = moment(item.created_at).startOf('minute').fromNow();
-                    });
-                });
-            }*/
         }
     };
 </script>

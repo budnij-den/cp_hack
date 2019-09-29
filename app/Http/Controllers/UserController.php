@@ -186,6 +186,7 @@ class UserController extends Controller
                     };
                 };
         };
+
 //теперь забираем данные фотографий в найденном альбоме
         for ($i = 0; $i < count($albumId); $i++) {
             if(!isset(User::where('id', $albumId[$i])->get()[0])) {
@@ -202,25 +203,27 @@ class UserController extends Controller
             foreach ($parsedPhotos['response'] as $objects) {
                 if (is_array($objects)) {
                     foreach ($objects as $photo) {
-                        if(!isset(PhotoFact::where('photoId', $photo['id'])->get()[0]) && isset($photo['lat'])) {
-                            PhotoFact::create([
-                                'photoId' => $photo['id'],
-                                'album_id' => $photo['album_id'],
-                                'user_id' => $photo['user_id'],
-                                'comment' => $photo['text'],
-                                'unix_sec' => $photo['date'],
-                                'latitude' => $photo['lat'],
-                                'longitude' => $photo['long'],
-                            ]);
+                        if(!isset(PhotoFact::where('photoId', $photo['id'])->get()[0])) {
+                            if (isset($photo['lat'])) {
+                                PhotoFact::create([
+                                    'photoId' => $photo['id'],
+                                    'album_id' => $photo['album_id'],
+                                    'user_id' => $photo['user_id'],
+                                    'comment' => $photo['text'],
+                                    'unix_sec' => $photo['date'],
+                                    'latitude' => $photo['lat'],
+                                    'longitude' => $photo['long'],
+                                ]);
+                            } else {
+                                PhotoFact::create([
+                                    'photoId' => $photo['id'],
+                                    'album_id' => $photo['album_id'],
+                                    'user_id' => $photo['user_id'],
+                                    'comment' => $photo['text'],
+                                    'unix_sec' => $photo['date'],
+                                ]);
+                            }
                         }
-                        else
-                            PhotoFact::create([
-                                'photoId' => $photo['id'],
-                                'album_id' => $photo['album_id'],
-                                'user_id' => $photo['user_id'],
-                                'comment' => $photo['text'],
-                                'unix_sec' => $photo['date'],
-                            ]);
                     }
                 }
             };
@@ -232,28 +235,25 @@ class UserController extends Controller
             $photoes = [];
             for ($j = 0; $j < count($photos); $j++) {
                 if (($j > 0) && isset($photos[$j]->latitude)) {
-                    $distance = sqrt(abs($photos[$j]->latitude - $photos[$j - 1]->latitude) ** 2 + abs($photos[$j]->longitude - $photos[$j - 1]->longitude) ** 2);
-                    $metreDistance = (int)($distance * 3.14 * 25600 / 180);
+                    $distance[$i] = sqrt(abs($photos[$j]->latitude - $photos[$j - 1]->latitude) ** 2 + abs($photos[$j]->longitude - $photos[$j - 1]->longitude) ** 2);
+                    $metreDistance[$i] = (float)($distance[$i] * 3.14 * 25600 / 180);
                     PhotoFact::where('photoId', $photos[$j]->photoId)
                         ->update([
-                            'distance' => $metreDistance
+                            'distance' => $metreDistance[$i]
                         ]);
                 }
-                $photoes[$j] = PhotoFact::select('distance')->orderby('unix_sec')->get()[$j]->toArray()['distance'];
+                $photoes[$i][$j] = PhotoFact::select('distance')->orderby('unix_sec')->get()[$j]->toArray()['distance'];
             }
-
-            $distanceSum = array_sum($photoes);
-            if ($distanceSum > 0) {
+            $distanceSum[$i] = array_sum($photoes[$i]);
+            if ($distanceSum[$i] > 0) {
                 User::where('id', $albumId[$i])
                     ->update([
-                        'distance' => $distanceSum
+                        'distance' => $distanceSum[$i]
                     ]);
             }
         }
 
-        $users = User::all();
-
-        return view('user.all', compact('users'));
+        return view('user.all');
     }
 
     /**
@@ -276,19 +276,22 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show()
     {
+        $this->create();
+        return User::all();
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     *
      */
-    public function edit(User $user)
+    public function edit()
     {
-        //
+        return PhotoFact::select('photoId', 'created_at', 'distance')
+            ->get()
+            ->toArray();
     }
 
     /**

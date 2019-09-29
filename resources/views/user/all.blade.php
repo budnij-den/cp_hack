@@ -6,6 +6,6 @@
 
 @section('content')
     <div class="chats" id="app">
-        <photo :users="{{ $users }}"></photo>
+        <photo></photo>
     </div>
 @endsection

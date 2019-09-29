@@ -1893,21 +1893,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['users'],
+  // props: ['users'],
   data: function data() {
     return {
-      updatedUsers: []
+      users: [],
+      photos: []
     };
   },
   created: function created() {
     var _this = this;
 
-    this.fetchDistance();
     setInterval(function () {
       return _this.fetchDistance();
-    }, 25 * 1000); // setInterval(() => this.loadPreviousMessages , 60 * 1000);
+    }, 5 * 1000);
+    setInterval(function () {
+      return _this.fetchPhotos();
+    }, 5 * 1000); // setInterval(() => this.loadPreviousMessages , 60 * 1000);
 
     moment.locale('ru');
     /*Echo.join('photo')
@@ -1919,15 +1921,20 @@ __webpack_require__.r(__webpack_exports__);
     fetchDistance: function fetchDistance() {
       var _this2 = this;
 
-      axios.get('activity').then(function (response) {
-        /*this.users.forEach(function (item, i) {
-            item.distance = moment(item.created_at).startOf('second').fromNow();
-        });*/
-        _this2.updatedUsers = response.data;
+      axios.get('/show').then(function (response) {
+        _this2.users = response.data;
       });
     },
-    sendTypingEvent: function sendTypingEvent() {
-      Echo.join('chat').whisper('typing', this.user);
+    fetchPhotos: function fetchPhotos() {
+      var _this3 = this;
+
+      axios.get('/photos').then(function (response) {
+        _this3.photos = response.data;
+
+        _this3.photos.forEach(function (item, i) {
+          item.create_At = moment(item.created_at).startOf('second').fromNow();
+        });
+      });
     }
     /*sendMessage() {
         axios.post('/messages', {message: this.newMessage})
@@ -65141,45 +65148,53 @@ var render = function() {
         _c(
           "div",
           {
-            directives: [
-              {
-                name: "chat-scroll",
-                rawName: "v-chat-scroll",
-                value: { always: false },
-                expression: "{always: false}"
-              }
-            ],
             staticClass: "card-body",
-            staticStyle: { height: "300px", "overflow-y": "scroll" },
-            on: {
-              "scroll-top": function($event) {
-                return _vm.loadPreviousMessages()
-              }
-            }
+            staticStyle: { height: "300px", "overflow-y": "scroll" }
           },
-          [
-            _vm.messages.length < _vm.allMessages.length
-              ? _c(
-                  "div",
-                  {
-                    staticClass: "shadow text-center rounded",
-                    on: {
-                      click: function($event) {
-                        $event.preventDefault()
-                        return _vm.loadPreviousMessages()
-                      }
-                    }
-                  },
-                  [
+          _vm._l(_vm.photos, function(photo, index) {
+            return _c(
+              "div",
+              {
+                key: index,
+                staticClass: "rounded p-2 mb-1",
+                staticStyle: { "background-color": "lightblue" }
+              },
+              [
+                _c("div", { staticClass: "clearfix" }, [
+                  _c("strong", [
                     _vm._v(
-                      "\n                    Предыдущие сообщения\n                "
+                      "\n                            " +
+                        _vm._s(photo.photoId) +
+                        "\n                        "
                     )
-                  ]
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _vm._m(2)
-          ]
+                  ]),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "text-left" }, [
+                    _vm._v(
+                      "\n                            :\n                        "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("a", { staticClass: "mb-1 text-muted text-left" }, [
+                    _vm._v(
+                      "\n                            " +
+                        _vm._s(photo.create_At) +
+                        "\n                        "
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "text-break" }, [
+                  _vm._v(
+                    "\n                        " +
+                      _vm._s(photo.distance) +
+                      "\n                    "
+                  )
+                ])
+              ]
+            )
+          }),
+          0
         )
       ])
     ])
@@ -65213,31 +65228,6 @@ var staticRenderFns = [
         _vm._v("\n                    Последняя активность\n                ")
       ])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "rounded p-2 mb-1",
-        staticStyle: { "background-color": "lightblue" }
-      },
-      [
-        _c("div", { staticClass: "clearfix" }, [
-          _c("strong"),
-          _vm._v(" "),
-          _c("span", { staticClass: "text-left" }, [
-            _vm._v("\n                            :\n                        ")
-          ]),
-          _vm._v(" "),
-          _c("a", { staticClass: "mb-1 text-muted text-left" })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "text-break" })
-      ]
-    )
   }
 ]
 render._withStripped = true
