@@ -35,21 +35,17 @@
                          @click.prevent="loadPreviousMessages()">
                         Предыдущие сообщения
                     </div>
-                    <div class="rounded p-2 mb-1" style="background-color: lightblue"
-                         v-for="(message, index) in messages" :key="index">
+                    <div class="rounded p-2 mb-1" style="background-color: lightblue">
                         <div class="clearfix">
                             <strong>
-                                {{ message.user.name }}
                             </strong>
                             <span class="text-left">
                                 :
                             </span>
                             <a class="mb-1 text-muted text-left">
-                                {{ message.create_At }}
                             </a>
                         </div>
                         <div class="text-break">
-                            {{ message.message }}
                         </div>
                     </div>
                 </div>
@@ -68,13 +64,13 @@
         },
         created() {
             this.fetchDistance();
-            setInterval(() => this.fetchDistance(), 25 * 60 * 1000);
+            setInterval(() => this.fetchDistance(), 25 * 1000);
             // setInterval(() => this.loadPreviousMessages , 60 * 1000);
             moment.locale('ru');
-            Echo.join('chat')
+            /*Echo.join('photo')
                 .listen('MessageSent', (event) => {
                     this.messages.push(event.message);
-                })
+                })*/
         },
         methods: {
             fetchDistance() {
@@ -89,7 +85,7 @@
                 Echo.join('chat')
                     .whisper('typing', this.user);
             },
-            sendMessage() {
+            /*sendMessage() {
                 axios.post('/messages', {message: this.newMessage})
                     .then(responce => {
                         this.fetchMessages();
@@ -101,8 +97,8 @@
                     .then(responce => {
                         this.fetchMessages()
                 });
-            },
-            loadPreviousMessages() {
+            },*/
+            /*loadPreviousMessages() {
                 axios.get('messages').then((response) => {
                     let k = this.messages.length;
                     k = k + 5;
@@ -111,7 +107,7 @@
                         item.create_At = moment(item.created_at).startOf('minute').fromNow();
                     });
                 });
-            }
+            }*/
         }
     };
 </script>

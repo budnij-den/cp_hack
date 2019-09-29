@@ -1894,82 +1894,66 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['users'],
   data: function data() {
     return {
-      allMessages: [],
-      messages: [],
-      activeUser: false
+      updatedUsers: []
     };
   },
   created: function created() {
     var _this = this;
 
-    this.fetchMessages();
+    this.fetchDistance();
     setInterval(function () {
-      return _this.fetchMessages();
-    }, 60 * 1000);
-    setInterval(function () {
-      return _this.loadPreviousMessages;
-    }, 60 * 1000);
+      return _this.fetchDistance();
+    }, 25 * 1000); // setInterval(() => this.loadPreviousMessages , 60 * 1000);
+
     moment.locale('ru');
-    Echo.join('chat').listen('MessageSent', function (event) {
-      _this.messages.push(event.message);
-    });
+    /*Echo.join('photo')
+        .listen('MessageSent', (event) => {
+            this.messages.push(event.message);
+        })*/
   },
   methods: {
-    fetchMessages: function fetchMessages() {
+    fetchDistance: function fetchDistance() {
       var _this2 = this;
 
-      axios.get('messages').then(function (response) {
-        _this2.messages = response.data.slice(-5);
-
-        _this2.messages.forEach(function (item, i) {
-          item.create_At = moment(item.created_at).startOf('second').fromNow();
-        });
-
-        _this2.allMessages = response.data;
+      axios.get('activity').then(function (response) {
+        /*this.users.forEach(function (item, i) {
+            item.distance = moment(item.created_at).startOf('second').fromNow();
+        });*/
+        _this2.updatedUsers = response.data;
       });
     },
     sendTypingEvent: function sendTypingEvent() {
       Echo.join('chat').whisper('typing', this.user);
-    },
-    sendMessage: function sendMessage() {
-      var _this3 = this;
-
-      axios.post('/messages', {
-        message: this.newMessage
-      }).then(function (responce) {
-        _this3.fetchMessages();
-
-        _this3.newMessage = '';
-      });
-    },
-    deleteMessage: function deleteMessage(messageId) {
-      var _this4 = this;
-
-      axios.get('/messageDelete/' + messageId).then(function (responce) {
-        _this4.fetchMessages();
-      });
-    },
-    loadPreviousMessages: function loadPreviousMessages() {
-      var _this5 = this;
-
-      axios.get('messages').then(function (response) {
-        var k = _this5.messages.length;
-        k = k + 5;
-        _this5.messages = response.data.slice(-k);
-
-        _this5.messages.forEach(function (item, i) {
-          item.create_At = moment(item.created_at).startOf('minute').fromNow();
-        });
-      });
     }
+    /*sendMessage() {
+        axios.post('/messages', {message: this.newMessage})
+            .then(responce => {
+                this.fetchMessages();
+                    this.newMessage = ''
+            });
+    },
+    deleteMessage(messageId) {
+        axios.get('/messageDelete/' + messageId)
+            .then(responce => {
+                this.fetchMessages()
+        });
+    },*/
+
+    /*loadPreviousMessages() {
+        axios.get('messages').then((response) => {
+            let k = this.messages.length;
+            k = k + 5;
+            this.messages = response.data.slice(-k);
+            this.messages.forEach(function (item, i) {
+                item.create_At = moment(item.created_at).startOf('minute').fromNow();
+            });
+        });
+    }*/
+
   }
 });
 
@@ -65194,51 +65178,8 @@ var render = function() {
                 )
               : _vm._e(),
             _vm._v(" "),
-            _vm._l(_vm.messages, function(message, index) {
-              return _c(
-                "div",
-                {
-                  key: index,
-                  staticClass: "rounded p-2 mb-1",
-                  staticStyle: { "background-color": "lightblue" }
-                },
-                [
-                  _c("div", { staticClass: "clearfix" }, [
-                    _c("strong", [
-                      _vm._v(
-                        "\n                            " +
-                          _vm._s(message.user.name) +
-                          "\n                        "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("span", { staticClass: "text-left" }, [
-                      _vm._v(
-                        "\n                            :\n                        "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("a", { staticClass: "mb-1 text-muted text-left" }, [
-                      _vm._v(
-                        "\n                            " +
-                          _vm._s(message.create_At) +
-                          "\n                        "
-                      )
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "text-break" }, [
-                    _vm._v(
-                      "\n                        " +
-                        _vm._s(message.message) +
-                        "\n                    "
-                    )
-                  ])
-                ]
-              )
-            })
-          ],
-          2
+            _vm._m(2)
+          ]
         )
       ])
     ])
@@ -65272,6 +65213,31 @@ var staticRenderFns = [
         _vm._v("\n                    Последняя активность\n                ")
       ])
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "rounded p-2 mb-1",
+        staticStyle: { "background-color": "lightblue" }
+      },
+      [
+        _c("div", { staticClass: "clearfix" }, [
+          _c("strong"),
+          _vm._v(" "),
+          _c("span", { staticClass: "text-left" }, [
+            _vm._v("\n                            :\n                        ")
+          ]),
+          _vm._v(" "),
+          _c("a", { staticClass: "mb-1 text-muted text-left" })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "text-break" })
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -77568,6 +77534,7 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   disableStats: true
 });
 window.moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+window.Echo.channel('DemoChannel');
 
 /***/ }),
 
