@@ -14,7 +14,7 @@
 	                </p>
                 </div>
                 <div class="col-3">
-                    <img src="{{ url('svg/BSSHSA.jpg') }}" width="195" class="img-thumbnail shadow" alt="">
+                    <img src="{{ url('svg/volunteer.jpg') }}" width="195" class="img-thumbnail shadow" alt="">
                 </div>
             </div>
             <hr class="row my-4">

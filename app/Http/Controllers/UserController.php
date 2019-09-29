@@ -228,22 +228,34 @@ class UserController extends Controller
                 }
             };
 
-            $photos = PhotoFact::where('album_id', $albumId[$i])
+            $photos[$i] = PhotoFact::where('album_id', $albumId[$i])
                 ->select('photoId', 'latitude', 'longitude', 'album_id')
                 ->orderBy('unix_sec')
-                ->get();
+                ->get()
+                ->toArray();
+            dd($photos[$i]);
+
             $photoes = [];
-            for ($j = 0; $j < count($photos); $j++) {
-                if (($j > 0) && isset($photos[$j]->latitude)) {
-                    $distance[$i] = sqrt(abs($photos[$j]->latitude - $photos[$j - 1]->latitude) ** 2 + abs($photos[$j]->longitude - $photos[$j - 1]->longitude) ** 2);
-                    $metreDistance[$i] = (float)($distance[$i] * 3.14 * 25600 / 180);
-                    PhotoFact::where('photoId', $photos[$j]->photoId)
+            $distance = [];
+            for ($j = 0; $j < count($photos[$i]); $j++) {
+                if (($j > 0) && isset($photos[$i][$j]->latitude)) {
+                    echo 'hello';
+                    $radian = (float)(3.14 / 360);
+                    $distance[$i][$j] = acos(sin($photos[$i][$j]->latitude * $radian) * sin($photos[$i][$j-1]->latitude * $radian) +
+                        cos($photos[$i][$j]->latitude * $radian) * cos($photos[$i][$j]->latitude * $radian) *
+                        cos($radian * ($photos[$i][$j]->longitude - $photos[$i][$j-1]->longitude))) * 6371000;
+                    dd($distance[$i][$j]);
+                    PhotoFact::where('photoId', $photos[$i][$j]->photoId)
                         ->update([
-                            'distance' => $metreDistance[$i]
+                            'distance' => $distance[$i][$j]
                         ]);
                 }
-                $photoes[$i][$j] = PhotoFact::select('distance')->orderby('unix_sec')->get()[$j]->toArray()['distance'];
+                $photoes[$i][$j] = PhotoFact::where('album_id', $albumId[$i])
+                    ->select('distance')
+                    ->get()[$j]
+                    ->toArray()['distance'];
             }
+
             $distanceSum[$i] = array_sum($photoes[$i]);
             if ($distanceSum[$i] > 0) {
                 User::where('id', $albumId[$i])
@@ -252,7 +264,7 @@ class UserController extends Controller
                     ]);
             }
         }
-
+        dd($photoes);
         return view('user.all');
     }
 
