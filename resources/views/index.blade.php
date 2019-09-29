@@ -19,7 +19,7 @@
             </div>
             <hr class="row my-4">
                 <p>
-                    <a class="dropdown-item btn-lg mb-2" href='{{ url("/activity") }}'>
+                    <a class="dropdown-item btn-secondary mb-2" href='{{ url("/activity") }}'>
                         Посмотреть активность
                     </a>
                 </p>

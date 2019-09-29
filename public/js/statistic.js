@@ -15,10 +15,9 @@ $(document).ready(function () {
         });
     });
     if ($(window).width() < 770) {
-        $('.img').removeClass('w-25').addClass('w-50');
-        $('.list-item').removeClass('w-75').addClass('w-50');
-        $('.all').removeClass('w-25').removeClass('ml-5');
-        $('.all-img').addClass('rounded-circle');
+        $('#stats').removeClass('w-75').addClass('w-100');
+        $('.subj').removeClass('w-25').addClass('w-100');
+        $('#flex').removeClass('flex-row').addClass('flex-column');
     }
 
     $('select').click(function () {

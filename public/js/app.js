@@ -1893,6 +1893,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   // props: ['users'],
   data: function data() {
@@ -1936,31 +1945,6 @@ __webpack_require__.r(__webpack_exports__);
         });
       });
     }
-    /*sendMessage() {
-        axios.post('/messages', {message: this.newMessage})
-            .then(responce => {
-                this.fetchMessages();
-                    this.newMessage = ''
-            });
-    },
-    deleteMessage(messageId) {
-        axios.get('/messageDelete/' + messageId)
-            .then(responce => {
-                this.fetchMessages()
-        });
-    },*/
-
-    /*loadPreviousMessages() {
-        axios.get('messages').then((response) => {
-            let k = this.messages.length;
-            k = k + 5;
-            this.messages = response.data.slice(-k);
-            this.messages.forEach(function (item, i) {
-                item.create_At = moment(item.created_at).startOf('minute').fromNow();
-            });
-        });
-    }*/
-
   }
 });
 
@@ -65105,12 +65089,32 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "d-flex flex-row" }, [
+  return _c("div", { staticClass: "d-flex flex-row", attrs: { id: "flex" } }, [
     _c(
       "div",
-      { staticClass: "w-75 mb-1 img" },
+      { staticClass: "w-75 mb-1 img", attrs: { id: "stats" } },
       [
-        _vm._m(0),
+        _c("ul", { staticClass: "list-group list-group-flush" }, [
+          _c("li", { staticClass: "d-flex list-group-item" }, [
+            _c("div", { staticClass: "w-50 d-flex" }, [
+              _c("img", {
+                staticClass: "img-thumbnail rounded-circle all-img",
+                staticStyle: { "background-color": "#a2b2c6" },
+                attrs: { width: "100", src: "/svg/volunteer.jpg", alt: "" }
+              }),
+              _vm._v(" "),
+              _c("a", { staticClass: "float-right" }, [
+                _vm._v("\n                        Имя\n                    ")
+              ])
+            ]),
+            _vm._v(" "),
+            _c("a", { staticClass: "w-50 btn-lg" }, [
+              _vm._v(
+                "\n                    Пройденное расстояние\n                "
+              )
+            ])
+          ])
+        ]),
         _vm._v(" "),
         _vm._l(_vm.users, function(user, index) {
           return _c(
@@ -65118,15 +65122,26 @@ var render = function() {
             { key: index, staticClass: "list-group list-group-flush" },
             [
               _c("li", { staticClass: "list-group-item" }, [
-                _c("a", { staticClass: "h5 float-left" }, [
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(user.name) +
-                      "\n                "
-                  )
+                _c("div", { staticClass: "w-50 d-flex" }, [
+                  _c("img", {
+                    staticClass: "img-thumbnail rounded-circle all-img",
+                    attrs: {
+                      width: "100",
+                      src: "/svg/" + user.id + ".jpg",
+                      alt: ""
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("a", { staticClass: "float-right" }, [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(user.name) +
+                        "\n                    "
+                    )
+                  ])
                 ]),
                 _vm._v(" "),
-                _c("a", { staticClass: "h5 float-right" }, [
+                _c("a", { staticClass: "w-50 btn-lg" }, [
                   _vm._v(
                     "\n                    " +
                       _vm._s(user.distance) +
@@ -65141,9 +65156,9 @@ var render = function() {
       2
     ),
     _vm._v(" "),
-    _c("div", { staticClass: "w-25 ml-1 mb-1 img" }, [
+    _c("div", { staticClass: "w-25 ml-1 mb-1 subj" }, [
       _c("div", { staticClass: "card" }, [
-        _vm._m(1),
+        _vm._m(0),
         _vm._v(" "),
         _c(
           "div",
@@ -65201,24 +65216,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("ul", { staticClass: "list-group list-group-flush" }, [
-      _c("li", { staticClass: "list-group-item" }, [
-        _c("a", { staticClass: "h2 float-left" }, [
-          _vm._v("\n                    Имя\n                ")
-        ]),
-        _vm._v(" "),
-        _c("a", { staticClass: "h2 float-right" }, [
-          _vm._v(
-            "\n                    Пройденное расстояние\n                "
-          )
-        ])
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

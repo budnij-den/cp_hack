@@ -13,149 +13,6 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @param User $user
-     * @return \Illuminate\Http\Response
-     */
-    public function index(User $user)
-    {
-        $test1 = new VariablesController();
-        $stts = $test1::$stts;
-        $currentSlb = $test1::timeSet()['slb'];
-        $alrt = MysqlRequests::programm()['alrt'];
-        $y = $test1::timeSet()['now'];
-        $days = $test1::$days;
-        $slba = $test1::$slba;
-        $months = $test1::$months;
-        $dzhapaStatuses = $test1::$dzhapaStatuses;
-
-        $test = new SlbsController();
-        $date = $test::statistics()['date'];
-        $data = $test::statistics()['date'];
-        $weekEndDays = $test::statistics()['weekEndDays'];
-        $yogaDays = 7 - $weekEndDays;
-        $slbs = $test::statistics()['slbs'];
-
-        for ($i = 0; $i < count($slbs); ++$i) {
-            for ($k = 0; $k < count($date); ++$k) {
-                $status = Slb::where('data', $date[$k]->format('Y-m-d'))
-                    ->where('slba', $slbs[$i])
-                    ->where('user_id', $user->id)
-                    ->select('stts')
-                    ->get()
-                    ->toArray();
-                if ($status) {
-                    $statuses[$i][$k] = $status['0']['stts'];
-                    foreach ($stts as $key => $stt) {
-                        if ($status['0']['stts'] == $key)
-                            $day[$i][$k] = $stt;
-                    }
-                } else {
-                    $day[$i][$k] = 0;
-                    $statuses[$i][$k] = '❌';
-                }
-                $dzhapa = Slb::where('data', $date[$k]->format('Y-m-d'))
-                    ->where('slba', 'ДЖ')
-                    ->where('user_id', $user->id)
-                    ->select('stts')
-                    ->get()
-                    ->toArray();
-                if ($dzhapa) {
-                    if (!(int)$dzhapa['0']['stts']) {
-                        $statuses[6][$k] = $dzhapa['0']['stts'];
-                        foreach ($dzhapaStatuses as $key => $stt) {
-                            if ($dzhapa['0']['stts'] == $key) {
-                                $day[6][$k] = $stt;
-                            }
-                        }
-                    } else {
-                        $day[6][$k] = (int)$dzhapa['0']['stts'];
-                        $statuses[6][$k] = (int)$dzhapa['0']['stts'];
-                    }
-                } else {
-                    $day[6][$k] = 0;
-                    $statuses[6][$k] = '❌';
-                }
-
-                if ($slbs[$i] == 'ЙГ') {
-                    if ($yogaDays == 0)
-                        $attendance[$i] = '❌';
-                    else
-                        $attendance[$i] = (int)(array_sum($day[$i]) / $yogaDays * 100);
-                } else
-                    $attendance[$i] = (int)(array_sum($day[$i]) / 7 * 100);
-
-                $attendance[6] = (int)(array_sum($day[6]) / 16 / 7 * 100);
-            }
-            $iArray[$i] = $i;
-            if ($i == 5)
-                $iArray[6] = 6;
-        }
-        array_multisort($iArray, SORT_ASC, $day);
-        array_multisort($iArray, SORT_ASC, $attendance);
-        array_multisort($iArray, SORT_ASC, $statuses);
-
-        $ongoingProjects = $user->projects()->where('finished', false)->get();
-        foreach ($ongoingProjects as $key => $project) {
-            $project->date = (new \DateTime($project->expire_at))->getTimestamp() - (new \DateTime())->getTimestamp();
-            if ($project->date > 0)
-                $project->day = (new \DateTime($project->expire_at))->diff(new \DateTime())->days;
-            else {
-                Project::where('id', $project->id)
-                    ->update([
-                        'finished' => true
-                    ]);
-                $ongoingProjects->forget($key);
-            }
-        }
-
-        $doneProjects = $user->projects()->where('finished', true)->get();
-        foreach ($doneProjects as $project) {
-            $project->date = (new \DateTime($project->expire_at))->getTimestamp() - (new \DateTime())->getTimestamp();
-            if ($project->date > 0)
-                $project->day = (new \DateTime($project->expire_at))->diff(new \DateTime())->days;
-        }
-
-        $daysInAshram = (integer)((new \DateTime("$user->created_at"))->diff(new \DateTime('now'))->days);
-        $dzhapa = $user->slbs()->where('slba', 'ДЖ')->select('stts')->get();
-        $dzhapaFiltered = $dzhapa->filter(function ($value) {
-            return $value->stts > 1;
-        });
-        foreach ($dzhapaFiltered as $dzhapaFilt) {
-            $dzhapaArray[] = $dzhapaFilt->toArray()['stts'];
-        }
-
-        if (isset($dzhapaArray))
-            $allDzhapa = array_sum($dzhapaArray);
-        else
-            $allDzhapa = 0;
-
-        if(($y->format('m') < '08') && ($y->format('d') < '26'))
-            $yearId = (int)($y->format('y') . '00') - 100;
-        else
-            $yearId = (int)($y->format('y') . '00');
-
-        for($i = 0; $i < 7; $i++) {
-            $services[$i] = $user->services()
-                ->where('dateToServe', $data[$i]->modify('+7 day')->format('Y-m-d'))
-                ->get();
-            if(isset($services[$i][0])) {
-                $rules[$i] = DB::table('rules')
-                    ->where('id', $services[$i][0]->rule_id)
-                    ->select('service', 'description', 'id')
-                    ->get()[0];
-                $rules[$i]->desc = nl2br($rules[$i]->description);
-            }
-            else {
-                $rules[$i] = 'Свободен';
-            }
-        }
-//dd($rules);
-        return view('user.page', compact('user', 'daysInAshram', 'allDzhapa', 'stts', 'currentSlb', 'alrt', 'doneProjects', 'ongoingProjects', 'slba', 'y', 'days', 'months', 'attendance', 'date', 'statuses', 'yearId', 'rules', 'data'));
-    }
-
-    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -233,7 +90,7 @@ class UserController extends Controller
                 ->orderBy('unix_sec')
                 ->get()
                 ->toArray();
-            dd($photos[$i]);
+//            dd($photos[$i]);
 
             $photoes = [];
             $distance = [];
@@ -244,7 +101,7 @@ class UserController extends Controller
                     $distance[$i][$j] = acos(sin($photos[$i][$j]->latitude * $radian) * sin($photos[$i][$j-1]->latitude * $radian) +
                         cos($photos[$i][$j]->latitude * $radian) * cos($photos[$i][$j]->latitude * $radian) *
                         cos($radian * ($photos[$i][$j]->longitude - $photos[$i][$j-1]->longitude))) * 6371000;
-                    dd($distance[$i][$j]);
+//                    dd($distance[$i][$j]);
                     PhotoFact::where('photoId', $photos[$i][$j]->photoId)
                         ->update([
                             'distance' => $distance[$i][$j]
@@ -264,7 +121,7 @@ class UserController extends Controller
                     ]);
             }
         }
-        dd($photoes);
+//        dd($photoes);
         return view('user.all');
     }
 

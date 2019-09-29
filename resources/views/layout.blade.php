@@ -21,19 +21,8 @@
      role="status">
     <span class="sr-only">Loading...</span>
 </div>
-<div>
-    {{--<div class="page-header d-none sidenav bg-light" ref="mySidenav" id="mySidenav">
-        @include('layouts.navbar')
-    </div>
-    @if($errors->any() || session('message'))
-        @include('layouts.toast')
-    @endif
-    <span @click="openNav">
-        <img src="{{ url('svg/BSSHSA.jpg') }}" width="35" class="rounded align-top m-2" alt="">
-    </span>--}}
-    <div class="page-main d-none" ref="main" id="main">
-        @yield('content')
-    </div>
+<div class="page-main d-none" ref="main" id="main">
+    @yield('content')
 </div>
 @include('layouts.footer')
 </body>
