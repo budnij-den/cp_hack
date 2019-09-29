@@ -58,3 +58,5 @@ window.Echo = new Echo({
 });
 
 window.moment = require('moment');
+
+window.Echo.channel('DemoChannel');

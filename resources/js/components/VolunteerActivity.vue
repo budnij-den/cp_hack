@@ -60,18 +60,16 @@
 
 <script>
     export default {
-        props: ['users',],
+        props: ['users'],
         data() {
             return {
-                allMessages: [],
-                messages: [],
-                activeUser: false,
+                updatedUsers: []
             }
         },
         created() {
-            this.fetchMessages();
-            setInterval(() => this.fetchMessages(), 60 * 1000);
-            setInterval(() => this.loadPreviousMessages , 60 * 1000);
+            this.fetchDistance();
+            setInterval(() => this.fetchDistance(), 25 * 60 * 1000);
+            // setInterval(() => this.loadPreviousMessages , 60 * 1000);
             moment.locale('ru');
             Echo.join('chat')
                 .listen('MessageSent', (event) => {
@@ -79,13 +77,12 @@
                 })
         },
         methods: {
-            fetchMessages() {
-                axios.get('messages').then(response => {
-                    this.messages = response.data.slice(-5);
-                    this.messages.forEach(function (item, i) {
-                        item.create_At = moment(item.created_at).startOf('second').fromNow();
-                    });
-                    this.allMessages = response.data;
+            fetchDistance() {
+                axios.get('activity').then(response => {
+                    /*this.users.forEach(function (item, i) {
+                        item.distance = moment(item.created_at).startOf('second').fromNow();
+                    });*/
+                    this.updatedUsers = response.data;
                 });
             },
             sendTypingEvent() {

@@ -163,8 +163,8 @@ class UserController extends Controller
     public function create()
     {
         $owner_id = "-186978175";
-        $app_access = "94482762a89fbd322abfc553dd1e29d3316f380fc496e1a5a0ec8464c3bde325a595ebc8d0146684c88e6";
-        $user_access = "3326f1a1839777020551629800b3d3ac38e89740468603976db585605841efb45c828fca01529dce96084";
+        $app_access = "443a9e71443a9e71443a9e71354457840f4443a443a9e7119b4943084bbaaf964138641";
+        $user_access = "93606406c38d4efca6586dad5ec39fc26b034a47c8a56d59002bca6394b10cdc72472835f6987ef5af279";
 
 //сначала получаем идентификатор альбома с названием "фотоотчет"
         $query = file_get_contents("https://api.vk.com/method/photos.getAlbums?owner_id=" . $owner_id . "&access_token=" . $app_access . "&v=5.0.1");
